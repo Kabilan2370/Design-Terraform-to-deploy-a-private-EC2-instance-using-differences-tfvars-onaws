@@ -8,6 +8,12 @@ resource "aws_instance" "app" {
 
   user_data = file("userData.sh")
 
+  root_block_device {
+    volume_size = 20        # 20 GB storage
+    volume_type = "gp3"     # Recommended (cost-effective & performant)
+    delete_on_termination = true
+  }
+
   tags = {
     Name = "${var.env}-strapi"
   }
