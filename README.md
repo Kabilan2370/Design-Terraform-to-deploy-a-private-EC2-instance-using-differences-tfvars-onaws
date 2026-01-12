@@ -4,7 +4,7 @@
 
 - Purpose: A playground for developers to write, test, and experiment with code without affecting real users or live data.
 
-### 2. 2. Production Environment (prod)
+### 2. Production Environment (prod)
 
 - Purpose: The live, stable environment where real users interact with your application. 
 
