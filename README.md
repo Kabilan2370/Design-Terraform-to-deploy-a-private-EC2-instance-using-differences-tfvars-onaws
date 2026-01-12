@@ -46,5 +46,7 @@ These both containers are running on same network**
       -e JWT_SECRET=myJWT \
       kabilan2003/strapicustom:7.3
 
+**7. Finally, I accessed though ALB DNS link**
+
   
 
