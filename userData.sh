@@ -23,7 +23,28 @@ sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin dock
 systemctl enable docker
 systemctl start docker
 
+docker network create group-net
+docker run -d \
+  --name strapi-postgres \
+  --network group-net \
+  -e POSTGRES_USER=strapi \
+  -e POSTGRES_PASSWORD=strapi123 \
+  -e POSTGRES_DB=strapi_db \
+  -v strapi-pgdata:/var/lib/postgresql/data \
+  postgres:15
+
 docker run -d \
   --name strapi \
+  --network group-net \
   -p 1337:1337 \
-  strapi/strapi
+  -e DATABASE_CLIENT=postgres \
+  -e DATABASE_HOST=strapi-postgres \
+  -e DATABASE_PORT=5432 \
+  -e DATABASE_NAME=strapi_db \
+  -e DATABASE_USERNAME=strapi \
+  -e DATABASE_PASSWORD=strapi123 \
+  -e APP_KEYS=myAppKey \
+  -e API_TOKEN_SALT=mySalt \
+  -e ADMIN_JWT_SECRET=myAdminJWT \
+  -e JWT_SECRET=myJWT \
+  kabilan2003/strapicustom:7.3
