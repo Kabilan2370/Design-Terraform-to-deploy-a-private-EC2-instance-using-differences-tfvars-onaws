@@ -1,34 +1,39 @@
-#!/bin/bash
+#!/bin/bash -xe
 
-# Install 4GB swap file
-sudo fallocate -l 4G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-# Make swap permanent
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+# Create 4GB swap
+fallocate -l 4G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
 
-# Add Docker's official GPG key:
+# Install Docker
 apt update -y
-apt install ca-certificates curl -y
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-chmod a+r /etc/apt/keyrings/docker.asc
+apt install -y ca-certificates curl gnupg lsb-release
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-  https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" \
-  > /etc/apt/sources.list.d/docker.list
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+> /etc/apt/sources.list.d/docker.list
 
 apt update -y
+apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 systemctl enable docker
 systemctl start docker
 
-docker network create group-net
+# Wait until Docker is ready
+until docker info >/dev/null 2>&1; do
+  sleep 3
+done
+
+# Create Docker network
+docker network create group-net || true
+
+# Run Postgres container
 docker run -d \
   --name strapi-postgres \
   --network group-net \
@@ -38,6 +43,7 @@ docker run -d \
   -v strapi-pgdata:/var/lib/postgresql/data \
   postgres:15
 
+# Run Strapi container
 docker run -d \
   --name strapi \
   --network group-net \
