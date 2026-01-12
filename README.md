@@ -1,0 +1,1 @@
+# Design-Terraform-to-deploy-a-private-EC2-instance-using-differences-tfvars-onaws
