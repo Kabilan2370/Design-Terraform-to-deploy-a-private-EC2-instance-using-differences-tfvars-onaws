@@ -1,5 +1,13 @@
 # Design-Terraform-to-deploy-a-private-EC2-instance-using-differences-tfvars-onaws
 
+### 1. Development Environment (dev)
+
+- Purpose: A playground for developers to write, test, and experiment with code without affecting real users or live data.
+
+### 2. Production Environment (prod)
+
+- Purpose: The live, stable environment where real users interact with your application. 
+
 **1. Here, I created 2 public and 2 private subnet groups. ALB should will work on atleast 2 or 3 subnets.**
 
 **2. I used Application Load Balancer it's listening on 80 and the target group will forward the traffic to ec2 machine on 1337.**
