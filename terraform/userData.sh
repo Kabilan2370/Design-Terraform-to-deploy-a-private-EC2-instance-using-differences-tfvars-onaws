@@ -49,7 +49,7 @@ docker run -d \
   --network group-net \
   -p 1337:1337 \
   -e DATABASE_CLIENT=postgres \
-  -e DATABASE_HOST=strapi-postgres \
+  -e DATABASE_HOST=${rds_endpoint} \
   -e DATABASE_PORT=5432 \
   -e DATABASE_NAME=strapi_db \
   -e DATABASE_USERNAME=strapi \

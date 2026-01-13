@@ -6,8 +6,9 @@ resource "aws_instance" "app" {
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
   key_name               = var.key_name
 
-  user_data = file("userData.sh")
-
+  user_data = templatefile("${path.module}/userData.sh", {
+  rds_endpoint = aws_db_instance.strapi.endpoint
+})
   root_block_device {
     volume_size = 20        # 20 GB storage
     volume_type = "gp3"     # Recommended (cost-effective & performant)
